@@ -1,0 +1,22 @@
+# Everything `make train` needs. train.py reads ONLY this file (plus --subset from the command line).
+seed: 42
+learning_rate: 2.0e-4
+batch_size: 16
+epochs: 6
+max_seq_length: 128        # tokens per example (prompt + JSON); longer examples are truncated
+weight_decay: 0.01
+warmup_ratio: 0.1
+
+base_model: EleutherAI/pythia-70m
+train_file: data/v1/train.jsonl     # cleaned teacher dataset (first max_examples records are used)
+max_examples: 1500                  # assignment limit: the first 1,500 records only
+output_version: v2                  # one more epoch than v1
+output_root: training/out
+loss_csv: training/loss_v2.csv
+
+library_versions:                   # pinned in training/requirements.txt; logged again at run time
+  python: "3.11"
+  torch: "2.5.1"
+  transformers: "4.46.3"
+  numpy: "1.26.4"
+  pyyaml: "6.0.2"

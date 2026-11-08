@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1+cpu; sys_platform == "linux" and platform_machine == "x86_64"
+torch==2.5.1; sys_platform != "linux" or platform_machine != "x86_64"
+transformers==4.46.3
+numpy==1.26.4
+safetensors==0.4.5
+boto3==1.35.68
+fastapi==0.115.5
+uvicorn==0.32.1
+pydantic==2.10.2

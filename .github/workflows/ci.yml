@@ -1,0 +1,92 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "GitHub Release tag that holds the model to evaluate (model-v1, or model-baseline for the untrained Pythia-70M)"
+        default: model-v1
+
+permissions:
+  contents: read
+
+jobs:
+  # 1 ---------------------------------------------------------------- linting
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install ruff==0.8.1
+      - run: ruff check .
+
+  # 2 ---------------------------------------------------------------- unit tests
+  unit-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -v
+
+  # secret scanning (must report nothing)
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.21.2 detect --source /repo --redact --verbose
+
+  # 3 ---------------------------------------------------------------- model evaluation
+  evaluate:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.release_tag || 'model-v1' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install CPU-only PyTorch and Transformers
+        run: pip install -r training/requirements.txt
+      - name: Download the model from the GitHub Release
+        run: |
+          mkdir -p dl model
+          gh release download "$TAG" --pattern 'model-*.tar.gz' --dir dl
+          ls -l dl
+          VERSION="${TAG#model-}"
+          if [ -f "models/$VERSION/model.sha256" ]; then
+            expected=$(cut -d' ' -f1 "models/$VERSION/model.sha256")
+            actual=$(sha256sum dl/*.tar.gz | cut -d' ' -f1)
+            test "$expected" = "$actual" && echo "checksum OK ($actual)"
+          else
+            echo "no committed checksum for $VERSION; skipping checksum comparison"
+          fi
+          tar -xzf dl/*.tar.gz -C model
+      - name: Predict on validation.jsonl
+        run: python eval/predict_student.py --model model --data data/validation.jsonl --out predictions.jsonl
+      - name: Score (report only; the gate is the next job)
+        run: python tools/score.py predictions.jsonl data/validation.jsonl --out report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-output
+          path: |
+            predictions.jsonl
+            report.json
+
+  # 4 ---------------------------------------------------------------- quality gate
+  quality-gate:
+    needs: evaluate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {name: eval-output}
+      - name: Quality gate (json_validity >= 95)
+        run: python tools/score.py predictions.jsonl data/validation.jsonl --min-validity 95

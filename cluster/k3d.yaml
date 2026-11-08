@@ -1,0 +1,15 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: cloudlab
+servers: 1
+agents: 0
+ports:
+  # Traefik (k3s built-in Ingress controller) is published on http://localhost:8080
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+options:
+  k3d:
+    wait: true
+    timeout: "180s"

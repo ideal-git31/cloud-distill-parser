@@ -1,0 +1,14 @@
+.venv/
+.secrets/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+training/out/
+data/v1/*.tmp
+# model weights never go into Git (they live in object storage + GitHub Release)
+*.safetensors
+*.bin
+*.pt
+*.tar.gz
+.DS_Store
