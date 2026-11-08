@@ -47,7 +47,7 @@ jobs:
     needs: unit-tests
     runs-on: ubuntu-latest
     env:
-      TAG: ${{ inputs.release_tag || 'model-v1' }}
+      TAG: ${{ inputs.release_tag || 'model-v2' }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
