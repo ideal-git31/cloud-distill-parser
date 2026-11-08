@@ -56,7 +56,11 @@ seed-models: venv
 
 deploy:
 	kubectl apply -f k8s/30-app.yaml
-	kubectl -n app rollout status deployment/parser --timeout=600s
+	@if [ -f models/v1/model.sha256 ]; then \
+		kubectl -n app rollout status deployment/parser --timeout=600s; \
+	else \
+		echo "No trained v1 model yet; application Pods are expected to remain unready."; \
+	fi
 
 ## ---- Task 1: teacher labelling ---------------------------------------------------------------------
 # Start Ollama first:  OLLAMA_HOST=0.0.0.0 ollama serve   and   ollama pull phi3.5
