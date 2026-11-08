@@ -7,7 +7,7 @@ on:
     inputs:
       release_tag:
         description: "GitHub Release tag that holds the model to evaluate (model-v1, or model-baseline for the untrained Pythia-70M)"
-        default: model-v1
+        default: model-v2
 
 permissions:
   contents: read
