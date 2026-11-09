@@ -89,6 +89,12 @@ def main():
     ap.add_argument("--pool", default="data/commands_pool.jsonl", help="(local mode) commands pool")
     ap.add_argument("--out", default="data/v1", help="(local mode) output directory")
     ap.add_argument("--counts-out", default="results/cleaning_counts.json")
+    ap.add_argument(
+        "--subset-size",
+        type=int,
+        default=None,
+        help="Validate coverage against the first N commands in the pool instead of the full pool",
+    )
     a = ap.parse_args()
 
     if a.local:
@@ -102,8 +108,20 @@ def main():
         records = [r for k in keys for r in read_jsonl_bytes(s3util.get_bytes(c, "datasets", k))]
         pool_ids = [r["id"] for r in read_jsonl_bytes(s3util.get_bytes(c, "datasets", "commands_pool.jsonl"))]
 
-    gaps, repeats, extra = check_coverage(pool_ids, [r["id"] for r in records])
-    print(f"shard coverage: {len(records)} records, gaps={len(gaps)} repeats={len(repeats)} unknown={len(extra)}")
+    if a.subset_size is not None:
+        if not 1 <= a.subset_size <= len(pool_ids):
+            sys.exit("--subset-size must be between 1 and the pool size")
+        expected_ids = pool_ids[:a.subset_size]
+        scope = f"first {a.subset_size} commands of {len(pool_ids)}"
+    else:
+        expected_ids = pool_ids
+        scope = f"full pool ({len(pool_ids)} commands)"
+
+    gaps, repeats, extra = check_coverage(expected_ids, [r["id"] for r in records])
+    print(
+        f"shard coverage ({scope}): {len(records)} records, "
+        f"gaps={len(gaps)} repeats={len(repeats)} unknown={len(extra)}"
+    )
     if gaps or repeats or extra:
         sys.exit(f"shards are inconsistent: gaps={gaps[:5]} repeats={repeats[:5]} unknown={extra[:5]}")
 

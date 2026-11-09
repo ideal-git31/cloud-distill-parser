@@ -23,8 +23,8 @@ spec:
           ports:
             - {containerPort: 8000}
           env:
-            - {name: MODEL_URI, value: "s3://models/v1/"}
-            - {name: MODEL_VERSION, value: "v1"}
+            - {name: MODEL_URI, value: "s3://models/v2/"}
+            - {name: MODEL_VERSION, value: "v2"}
             - {name: S3_ENDPOINT, value: "http://seaweedfs.data.svc.cluster.local:8333"}
             - {name: MAX_NEW_TOKENS, value: "64"}
             - {name: FAULT_INJECT, value: "0"}

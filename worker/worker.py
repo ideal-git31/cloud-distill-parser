@@ -34,6 +34,14 @@ def main():
     c = s3util.client()
     pool = s3util.get_bytes(c, "datasets", "commands_pool.jsonl").decode("utf-8").splitlines()
     todo = list(select_shard(pool, idx, cnt))
+
+    # Optional cap on total records per shard; existing checkpoints count
+    # toward this limit.
+    shard_limit = int(os.environ.get("SHARD_LIMIT", len(todo)))
+    if shard_limit <= 0:
+        raise ValueError("SHARD_LIMIT must be greater than zero")
+    todo = todo[:shard_limit]
+
     key = f"teacher/shard-{idx}.jsonl"
 
     done = []

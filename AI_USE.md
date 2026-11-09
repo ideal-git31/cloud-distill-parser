@@ -1,20 +1,35 @@
-# AI use
-
-> DRAFT: edit this so it is true for YOU. Replace every <...> with what you actually did.
+# AI Use Declaration
 
 ## Tools used
-- Claude (Anthropic, claude.ai): generated the first version of the repository skeleton (Makefile, Kubernetes manifests,
-  worker, cleaning script, training script, service, tests, CI workflow, documentation drafts).
-- <any other tool, e.g. GitHub Copilot, ChatGPT: what for>
 
-## What AI did NOT do
-- The teacher labels were produced by phi3.5 through Ollama and were never edited by hand.
-- All numbers in the report (counts, scores, latency, memory, cost) come from commands I ran myself.
-- <the handwritten reflection was written by me>
+- **Claude (Anthropic):** Assisted in generating the initial repository skeleton and first drafts of the Makefile, Kubernetes manifests, worker, cleaning script, training script, inference service, tests, CI workflow and documentation.
+- **ChatGPT (OpenAI):** Assisted with iterative debugging, implementation changes, Kubernetes and Docker troubleshooting, interpreting test results, and preparing technical documentation.
+- **Ollama with Phi-3.5 Mini Instruct:** Used as the teacher model to generate command-to-JSON labels. Teacher responses were produced by the model, not written by ChatGPT.
 
-## How I checked the AI's output
-- Read every file and ran it: <which parts you read line by line>
-- Unit tests (`make test`) and lint (`make lint`); <what you added or fixed>
-- Verified against the assignment text: <e.g. checked the cleaning rules (a)-(e), NACL rule order, shard formula>
-- Things the AI got wrong or I had to fix: <be specific, e.g. image build error, manifest field, prompt rewrite>
-- Concepts I looked up myself: <KD papers, Kubernetes probes, NACL statelessness, ...>
+## What AI did not do
+
+- ChatGPT did not generate the teacher-label dataset.
+- The reported measurements were collected by running commands and tests in the project environment.
+- The validation set was used for evaluation, not training.
+- The handwritten reflection must be written by the student.
+
+## Verification performed
+
+- Executed the project unit tests: 21 passed, 1 skipped.
+- Executed Ruff linting successfully.
+- Ran the teacher-label cleaning and coverage checks.
+- Trained and evaluated both student model versions.
+- Tested Docker inference, Kubernetes deployment, health/readiness probes, autoscaling and Pod recovery.
+- Ran the NACL packet simulator: 6 of 6 sample cases passed.
+- Ran a 50-request memory test and a 63-request load test.
+- Verified the GitHub Actions pipeline, including lint, unit tests, secret scanning, model evaluation and the JSON-validity quality gate.
+
+## Limitations and corrections
+
+- The intended dataset size was 3,000 commands, but only 600 commands were labelled during this experiment. Cleaning retained 513 examples.
+- The student models were trained on 513 examples rather than the intended 1,500.
+- The initial CI workflow used a nonexistent model-v1 release as its push-event fallback. This was corrected to model-v2.
+- The memory test was updated to use model-v2 because model-v1 was not uploaded to SeaweedFS.
+- The local Kubernetes cluster demonstrates deployment and Pod-level recovery, not multi-node cloud fault tolerance.
+
+The student should review this declaration and ensure it accurately represents their own contribution before submission.

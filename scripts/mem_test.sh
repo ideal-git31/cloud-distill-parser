@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Task 3: run the image with 1 CPU / 1 GiB, send 50 sequential requests, report peak memory.
-# Needs: the cluster up (S3 port-forward on :8333), the image cmd-parser:1.0 built, models/v1 uploaded.
+# Needs: the cluster up (S3 port-forward on :8333), the image cmd-parser:1.0 built, models/v2 uploaded.
 set -euo pipefail
 source .secrets/s3.env
 scripts/pf.sh start
@@ -8,7 +8,7 @@ mkdir -p results
 docker rm -f parser-memtest >/dev/null 2>&1 || true
 docker run -d --name parser-memtest --cpus=1 --memory=1g --memory-swap=1g -p 8001:8000 \
   --add-host=host.docker.internal:host-gateway \
-  -e MODEL_URI=s3://models/v1/ -e MODEL_VERSION=v1 -e S3_ENDPOINT=http://host.docker.internal:8333 -e MAX_NEW_TOKENS=64 \
+  -e MODEL_URI=s3://models/v2/ -e MODEL_VERSION=v2 -e S3_ENDPOINT=http://host.docker.internal:8333 -e MAX_NEW_TOKENS=64 \
   -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY cmd-parser:1.0 >/dev/null
 for _ in $(seq 1 120); do [[ $(curl -s -o /dev/null -w '%{http_code}' localhost:8001/readyz) == 200 ]] && break; sleep 2; done
 {

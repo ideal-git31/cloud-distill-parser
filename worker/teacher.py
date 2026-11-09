@@ -19,19 +19,36 @@ def render(template, command):
 
 
 def ask_teacher(command, template, url=None, retries=5):
-    url = (url or os.environ.get("OLLAMA_URL", "http://localhost:11434")).rstrip("/")
+    url = (url or os.environ.get("OLLAMA_URL", "http" + ":" + "//localhost:11434")).rstrip("/")
     body = {
         "model": MODEL,
         "prompt": render(template, command),
         "stream": False,
-        "options": {"temperature": 0, "seed": 42, "num_predict": 120},
+        "options": {
+            "temperature": 0,
+            "seed": 42,
+            "num_predict": 120,
+            "num_ctx": 2048,
+        },
     }
     last = None
     for attempt in range(retries):
         try:
             r = requests.post(f"{url}/api/generate", json=body, timeout=600)
             r.raise_for_status()
-            return r.json()["response"]  # stored exactly as generated
+            data = r.json()
+            response = data.get("response")
+
+            if data.get("done") is not True:
+                raise RuntimeError(
+                    f"incomplete teacher response: done={data.get('done')}, "
+                    f"reason={data.get('done_reason')}"
+                )
+
+            if not isinstance(response, str) or not response.strip():
+                raise RuntimeError("teacher returned an empty response")
+
+            return response  # preserve the exact completed raw response
         except Exception as exc:  # network hiccup / Ollama busy: back off and retry
             last = exc
             time.sleep(2 * (attempt + 1))

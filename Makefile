@@ -4,7 +4,7 @@ REPO     ?= ideal-git31/cloud-distill-parser
 CLUSTER  := cloudlab
 PYTHON3  ?= python3
 PY       := .venv/bin/python
-S3ENV    := . .secrets/s3.env && export S3_ENDPOINT=http://localhost:8333 PYTHONPATH=.
+S3ENV := . .secrets/s3.env && export S3_ENDPOINT=http://localhost:8333 PYTHONPATH=.
 CONFIG   ?= training/config.yaml
 VERSION  ?= v1
 

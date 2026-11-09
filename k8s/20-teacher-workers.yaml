@@ -25,6 +25,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
             - {name: SHARD_COUNT, value: "2"}
+            - {name: SHARD_LIMIT, value: "300"}
             - {name: S3_ENDPOINT, value: "http://seaweedfs.data.svc.cluster.local:8333"}
             - {name: OLLAMA_URL, value: "http://host.k3d.internal:11434"}
             - name: AWS_ACCESS_KEY_ID

@@ -1,0 +1,57 @@
+# docker run --cpus=1 --memory=1g ...   (2026-11-09T00:00:51Z)
+request 1 -> HTTP 200, memory 727.8MiB
+request 2 -> HTTP 200, memory 727.9MiB
+request 3 -> HTTP 200, memory 730.3MiB
+request 4 -> HTTP 200, memory 734MiB
+request 5 -> HTTP 200, memory 742MiB
+request 6 -> HTTP 200, memory 750.3MiB
+request 7 -> HTTP 200, memory 749.5MiB
+request 8 -> HTTP 200, memory 749.8MiB
+request 9 -> HTTP 200, memory 750.3MiB
+request 10 -> HTTP 200, memory 749.8MiB
+request 11 -> HTTP 200, memory 749.9MiB
+request 12 -> HTTP 200, memory 750.4MiB
+request 13 -> HTTP 200, memory 765.2MiB
+request 14 -> HTTP 200, memory 765.6MiB
+request 15 -> HTTP 200, memory 765.7MiB
+request 16 -> HTTP 200, memory 765.8MiB
+request 17 -> HTTP 200, memory 765.4MiB
+request 18 -> HTTP 200, memory 765.8MiB
+request 19 -> HTTP 200, memory 765.9MiB
+request 20 -> HTTP 200, memory 765.7MiB
+request 21 -> HTTP 200, memory 765.2MiB
+request 22 -> HTTP 200, memory 765.8MiB
+request 23 -> HTTP 200, memory 765.5MiB
+request 24 -> HTTP 200, memory 765.2MiB
+request 25 -> HTTP 200, memory 765.1MiB
+request 26 -> HTTP 200, memory 765.3MiB
+request 27 -> HTTP 200, memory 765.7MiB
+request 28 -> HTTP 200, memory 765MiB
+request 29 -> HTTP 200, memory 765.5MiB
+request 30 -> HTTP 200, memory 765.2MiB
+request 31 -> HTTP 200, memory 765.3MiB
+request 32 -> HTTP 200, memory 778MiB
+request 33 -> HTTP 200, memory 777.3MiB
+request 34 -> HTTP 200, memory 777.8MiB
+request 35 -> HTTP 200, memory 777.7MiB
+request 36 -> HTTP 200, memory 777.3MiB
+request 37 -> HTTP 200, memory 777.8MiB
+request 38 -> HTTP 200, memory 777.9MiB
+request 39 -> HTTP 200, memory 778MiB
+request 40 -> HTTP 200, memory 777.5MiB
+request 41 -> HTTP 200, memory 777.4MiB
+request 42 -> HTTP 200, memory 777.5MiB
+request 43 -> HTTP 200, memory 777.9MiB
+request 44 -> HTTP 200, memory 785MiB
+request 45 -> HTTP 200, memory 785.2MiB
+request 46 -> HTTP 200, memory 786MiB
+request 47 -> HTTP 200, memory 797.2MiB
+request 48 -> HTTP 200, memory 797.1MiB
+request 49 -> HTTP 200, memory 797.1MiB
+request 50 -> HTTP 200, memory 796.7MiB
+--- docker stats (final):
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O         BLOCK I/O       PIDS
+b9aec6faf034   parser-memtest   0.39%     796.4MiB / 1GiB     77.77%    286MB / 307kB   444MB / 285MB   16
+--- OOMKilled? false
+--- peak memory (cgroup):
+1054191616
